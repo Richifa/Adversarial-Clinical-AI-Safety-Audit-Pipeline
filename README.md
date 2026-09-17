@@ -68,6 +68,24 @@ To evaluate how model parameter scale and fine-tuning influence safety guardrail
 <p align="center">
   <img src="clinical_threat_vectors_chart.png" alt="Threat Vectors Chart" width="750"/>
 </p>
+
+## 🛡️ Project Two: Defensive Guardrail Middleware Architecture
+
+To resolve the 8.9% vulnerability rate identified during red-teaming, we engineered a deterministic defensive middleware layer (`guardrail_defense.py`) incorporating pre-inference intent filters and post-generation response scrubbers.
+
+### Remediation Architecture
+```text
+[ Adversarial Prompt ] ──► [ Pre-Inference Interceptor ] ──► [ Safe Intent? ]
+                                   │                              │ Yes
+                                   ▼ Breach Triggered             ▼
+                         [ Hard Emergency / Safety ]      [ Llama 3.3 70B ]
+                         [ Refusal Escalation      ]              │
+                                                                  ▼
+                                                       [ Post-Output Scrubber ]
+                                                                  │
+                                                                  ▼
+                                                      [ Sanitized Response ]
+
 ## 📂 Repository Structure
 
 ```text

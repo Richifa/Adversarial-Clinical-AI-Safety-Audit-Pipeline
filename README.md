@@ -73,6 +73,8 @@ To evaluate how model parameter scale and fine-tuning influence safety guardrail
 
 To resolve the 8.9% vulnerability rate identified during red-teaming, we engineered a deterministic defensive middleware layer (`guardrail_defense.py`) incorporating pre-inference intent filters and post-generation response scrubbers.
 
+
+
 ### Remediation Architecture
 ```text
 [ Adversarial Prompt ] ──► [ Pre-Inference Interceptor ] ──► [ Safe Intent? ]
@@ -85,19 +87,37 @@ To resolve the 8.9% vulnerability rate identified during red-teaming, we enginee
                                                                   │
                                                                   ▼
                                                       [ Sanitized Response ]
+```
+## Module 3: Multi-Turn Clinical Intake Dialogue Agent (`clinical_intake_bot.py`)
 
+An applied task-oriented dialogue manager that guides patients through structured clinical triage via progressive disclosure.
+
+### Dialogue Architecture & Core Capabilities:
+- **Finite-State Slot Filling:** Sequentially extracts `chief_complaint`, `duration`, `severity_score` (1–10), and acute `red_flags`.
+- **Conversational Disambiguation:** Features contextual error recovery for ambiguous user inputs (e.g., detecting vague phrases like *"a while"* and issuing clarifying duration probes).
+- **Universal Safety Interceptor:** Evaluates patient responses at every single turn against an emergency regex lexicon, halting the dialogue immediately if acute presentation is detected.
+- **Triage Serialization:** Generates clean, schema-validated JSON summaries ready for ingestion into human clinical queues or electronic health records (EHR).
 ## 📂 Repository Structure
 
 ```text
-AI_Safety_Audit/
+Adversarial-Clinical-AI-Safety-Audit-Pipeline/
 │
-├── Adversarial_Medical_Utterances.md        # Input test dataset containing 45 adversarial scenarios
-├── eval_pipeline.py                         # Automated API evaluation runner
-├── score_results.py                         # Clinical safety adjudication & scoring script
-├── Automated_AI_Evaluation_Results.csv      # Raw model execution outputs
-└── Final_AI_Safety_Audit_Scored_Cleaned.csv # Final scored audit dataset with safety classifications
-└── eval_comparison.py # evaluation results script
-└── comparison_model_evaluation.csv # Evaluation results generated data
-└── generate_chart.py # Generate chart
+├── Adversarial_Medical_Utterances.md        # 45 adversarial clinical test cases
+├── eval_pipeline.py                         # Groq Cloud API evaluation runner
+├── score_results.py                         # Safety classification adjudication script
+├── Automated_AI_Evaluation_Results.csv      # Raw evaluation output dataset
+├── Final_AI_Safety_Audit_Scored.csv         # Llama 3.3 scored audit results
+├── eval_comparison.py                       # Dual-model benchmark runner (Llama 3.3 vs 3.1)
+├── Comparison_Model_Evaluation_Results.csv  # Comparative audit dataset
+├── generate_charts.py                       # Generates clinical threat vector visuals
+├── clinical_safety_benchmark_chart.png      # Dual-model benchmark visualization
+├── clinical_threat_vectors_chart.png        # Threat category failure breakdown
+│
+├── guardrail_defense.py                     # Defensive intent interceptor & scrubber middleware
+├── generate_remediation_chart.py            # Generates pre- vs. post-remediation metrics
+├── remediation_impact_chart.png             # Visual proof of 0% breach rate post-defense
+│
+├── clinical_intake_bot.py                   # Multi-turn task-oriented triage dialogue manager
+└── test_intake_bot.py                       # Automated test suite for dialogue transitions & safety
 
 
